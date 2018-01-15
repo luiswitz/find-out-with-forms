@@ -17,4 +17,7 @@ RSpec.configure do |config|
   config.filter_rails_from_backtrace!
 
   config.include Devise::Test::ControllerHelpers, type: :controller
+
+  config.include Requests::JSONHelpers, type: :request
+  config.include Requests::HeaderHelpers, type: :controller
 end
