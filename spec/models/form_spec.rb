@@ -31,4 +31,31 @@ RSpec.describe Form, type: :model do
       expect(Answer.where(form_id: form.id).count).to eq 0
     end
   end
+
+  describe 'validations' do
+    let(:form) { create(:form) } 
+
+    it 'is not valid without a title' do
+      form.title = nil 
+      expect(form).to_not be_valid
+    end
+
+    it 'is not valid without a description' do
+      form.description = nil
+      expect(form).to_not be_valid
+    end
+
+    it 'is not valid without an user' do
+      form.user = nil
+      expect(form).to_not be_valid
+    end
+
+    it 'has a unique title' do
+      created_title = form.title
+
+      expect {
+        create(:form, title: created_title)
+      }.to raise_error(ActiveRecord::RecordInvalid)
+    end
+  end
 end
