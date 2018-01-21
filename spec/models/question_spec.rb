@@ -20,4 +20,34 @@ RSpec.describe Question, type: :model do
       expect(QuestionsAnswer.where(question_id: question.id).count).to eq 0
     end
   end
+
+  describe 'validations' do
+    let(:question) { build(:question) }
+
+    it 'is not valid without a title' do
+      question.title = nil
+      expect(question).to_not be_valid
+    end
+
+    it 'is not valid without a kind' do
+      question.kind = nil
+      expect(question).to_not be_valid
+    end
+
+    it 'is not valid without a form' do
+      question.form = nil
+      expect(question).to_not be_valid
+    end
+
+    it 'has the right kinds' do
+      expected_kinds = { 
+        "short_text" => 0,
+        "long_text" => 1,
+        "integer" => 2, 
+        "boolean" => 3
+      }
+
+      expect(described_class.kinds).to eq(expected_kinds)
+    end
+  end
 end
