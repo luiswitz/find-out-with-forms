@@ -20,4 +20,13 @@ RSpec.describe Answer, type: :model do
       expect(QuestionsAnswer.where(answer_id: answer.id).count).to eq 0
     end
   end
+
+  describe 'validations' do
+    let(:answer) { build(:answer) }
+
+    it 'is not valid without a form' do
+      answer.form = nil  
+      expect(answer).to_not be_valid
+    end
+  end
 end
