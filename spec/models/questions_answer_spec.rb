@@ -13,5 +13,21 @@ RSpec.describe QuestionsAnswer, type: :model do
       expect(association.macro).to eq(:belongs_to)
     end
   end
+
+  describe 'validations' do
+    let(:question_answer) { build(:questions_answer) }
+
+    it 'is not valid without a answer' do
+      question_answer.answer = nil
+
+      expect(question_answer).to_not be_valid
+    end
+
+    it 'is not valid without a question' do
+      question_answer.question = nil
+
+      expect(question_answer).to_not be_valid
+    end
+  end
 end
 
