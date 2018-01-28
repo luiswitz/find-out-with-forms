@@ -8,9 +8,9 @@ RSpec.describe "Api::V1::Forms", type: :request do
     end
 
     context 'with valid authentication headers' do
-      let(:user) { create(:user) }
-      let(:form1) { create(:form, user: user) }
-      let(:form2) { create(:form, user: user) }
+      let!(:user) { create(:user) }
+      let!(:form1) { create(:form, user: user) }
+      let!(:form2) { create(:form, user: user) }
 
       before do
         get '/api/v1/forms', params: {}, headers: header_with_authentication(user)
@@ -20,6 +20,14 @@ RSpec.describe "Api::V1::Forms", type: :request do
         expect_status(200)
       end
 
+      it 'returns a list with two forms' do
+        expect(json.count).to eq 2
+      end
+
+      it 'responds with expected data' do
+        expect(json[0]).to eq(JSON.parse(form1.to_json))
+        expect(json[1]).to eq(JSON.parse(form2.to_json))
+      end
     end
   end
 end
