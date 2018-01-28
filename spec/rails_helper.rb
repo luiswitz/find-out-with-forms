@@ -19,5 +19,5 @@ RSpec.configure do |config|
   config.include Devise::Test::ControllerHelpers, type: :controller
 
   config.include Requests::JSONHelpers, type: :request
-  config.include Requests::HeaderHelpers, type: :controller
+  config.include Requests::HeaderHelpers, type: :request
 end
