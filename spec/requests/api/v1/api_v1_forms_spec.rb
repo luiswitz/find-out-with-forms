@@ -16,7 +16,7 @@ RSpec.describe "Api::V1::Forms", type: :request do
         get '/api/v1/forms', params: {}, headers: header_with_authentication(user)
       end
       
-      it 'returns http 200 code' do
+      it 'returns http code 200' do
         expect_status(200)
       end
 
@@ -27,6 +27,59 @@ RSpec.describe "Api::V1::Forms", type: :request do
       it 'responds with expected data' do
         expect(json[0]).to eq(JSON.parse(form1.to_json))
         expect(json[1]).to eq(JSON.parse(form2.to_json))
+      end
+    end
+  end
+
+  describe 'GET /forms/:friendly_id' do
+    let(:user) { create(:user) }
+
+    context 'when form exists' do
+      context 'and the form is enabled' do
+        let!(:form) { create(:form, user: user, enable: true) }
+        let!(:question1) { create(:question, form: form) }
+        let!(:question2) { create(:question, form: form) }
+
+        before do
+          get "/api/v1/forms/#{form.friendly_id}", 
+            params: {}, 
+            headers: header_with_authentication(user)
+        end
+
+        it 'returns http code 200' do
+          expect_status(200)
+        end
+
+        it 'returns expected form' do
+          expect(json).to eq(JSON.parse(form.to_json))
+        end
+
+        it 'returns associated questions' do
+          expect(json['questions'].first).to eq(JSON.parse(question1.to_json))
+          expect(json['questions'].last).to eq(JSON.parse(question2.to_json))
+        end
+      end
+
+      context 'and is disabled' do
+        let(:form) { create(:form, user: user, enable: false) }
+
+        it 'returns http code 404' do
+          get "/api/v1/forms/#{form.friendly_id}", 
+            params: {}, 
+            headers: header_with_authentication(user)
+
+          expect_status(404)
+        end
+      end
+    end
+
+    context 'when the form doesn\'t exists' do
+      it 'returns http code 404' do
+        get '/api/v1/forms/something',
+          params: {},
+          headers: header_with_authentication(user)
+
+        expect_status(404)
       end
     end
   end
