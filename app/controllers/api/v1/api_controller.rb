@@ -4,7 +4,7 @@ module Api::V1
       render json: { message: 'Not found' }, status: :not_found
     end
 
-    rescue_from(ActionController::ParameterMissing) do
+    rescue_from(ActionController::ParameterMissing) do |parameter_missing_exception|
       render json: { 
         message: "Required parameter missing #{parameter_missing_exception.param}"
       },
