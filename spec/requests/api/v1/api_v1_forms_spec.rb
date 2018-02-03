@@ -83,4 +83,32 @@ RSpec.describe "Api::V1::Forms", type: :request do
       end
     end
   end
+
+  describe 'PUT /forms/:friendly_id' do
+    context 'with invalid authentication headers' do
+      it_behaves_like :deny_without_authorization, :put, '/api/v1/forms/questionary'
+    end
+
+    context 'with valid authentication headers' do
+      let(:user) { create(:user) }
+
+      context 'when form exists' do
+        context 'and current user is the owner' do
+          let(:form) { create(:form, user: user) }
+          let(:form_attributes) { attributes_for(:form, id: form.id) }
+
+          before do
+            put "/api/v1/forms/#{form.friendly_id}",
+              params: { form: form_attributes },
+              headers: header_with_authentication(user)
+          end
+
+          it 'returns http code 200' do
+            expect_status(200)
+          end
+
+        end
+      end
+    end
+  end
 end
