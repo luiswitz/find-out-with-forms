@@ -1,6 +1,7 @@
 class Api::V1::FormsController < Api::V1::ApiController
   before_action :authenticate_api_v1_user!, except: [:show]
   before_action :set_form, only: [:show, :update]
+  before_action :allow_only_owner, only: [:update]
 
   def index
     @forms = current_api_v1_user.forms
@@ -24,6 +25,12 @@ class Api::V1::FormsController < Api::V1::ApiController
   end
 
   private
+
+  def allow_only_owner
+    unless current_api_v1_user == @form.user
+      render(json: {}, status: :forbidden) and return
+    end
+  end
 
   def set_form
     @form = Form.friendly.find(params[:id])

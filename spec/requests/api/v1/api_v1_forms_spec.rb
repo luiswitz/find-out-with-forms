@@ -107,6 +107,27 @@ RSpec.describe "Api::V1::Forms", type: :request do
             expect_status(200)
           end
 
+          it 'is updated with valid data' do
+            form.reload
+            form_attributes.each do |field|
+              expect(json[field.first.to_s]).to eq(field.last)
+            end
+          end
+        end
+
+        context 'current user is not the owner' do
+          let(:form) { create(:form) }
+          let(:form_attributes) { attributes_for(:form, id: form.id) }
+
+          before do
+            put "/api/v1/forms/#{form.friendly_id}",
+              params: { form: form_attributes },
+              headers: header_with_authentication(user)
+          end
+
+          it 'returns 403' do
+            expect_status(403)
+          end
         end
       end
     end
