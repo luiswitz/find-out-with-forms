@@ -9,7 +9,7 @@ class Api::V1::FormsController < Api::V1::ApiController
 
   def show
     status = @form.enable? ? 200 : 404
-    render json: @form, include: 'questions', status: status
+    render json: @form, include: :questions, status: status
   end
 
   def update

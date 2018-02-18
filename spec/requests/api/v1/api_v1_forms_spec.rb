@@ -51,7 +51,7 @@ RSpec.describe "Api::V1::Forms", type: :request do
         end
 
         it 'returns expected form' do
-          expect(json).to eq(JSON.parse(form.to_json))
+          expect(json).to eq(JSON.parse(form.to_json(include: :questions)))
         end
 
         it 'returns associated questions' do
