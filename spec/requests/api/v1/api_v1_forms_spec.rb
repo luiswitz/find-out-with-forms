@@ -130,6 +130,18 @@ RSpec.describe "Api::V1::Forms", type: :request do
           end
         end
       end
+
+      context 'when the form does not exist' do
+        let(:form_attributes) { attributes_for(:form) }
+
+        it 'returnd http code 404' do
+          put '/api/v1/forms/some-invalid-id',
+            params: { form: form_attributes },
+            headers: header_with_authentication(user)
+
+          expect_status(404)
+        end
+      end
     end
   end
 end
