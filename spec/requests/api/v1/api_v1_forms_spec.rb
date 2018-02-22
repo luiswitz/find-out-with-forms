@@ -185,4 +185,52 @@ RSpec.describe "Api::V1::Forms", type: :request do
       end
     end
   end
+
+  describe '#destroy DELETE /forms/:friendly_id' do
+    let(:user) { create(:user) }
+
+    context 'an existing form' do
+      context 'current user is the owner' do
+        let(:form) { create(:form, user: user) }
+
+        before do
+          delete "/api/v1/forms/#{form.friendly_id}",
+            params: {},
+            headers: header_with_authentication(user)
+        end
+
+        it 'returns http code 200' do
+          expect_status(200)
+        end
+
+        it 'deletes the form' do
+          expect(Form.all.count).to eq(0)
+        end
+      end
+
+      context 'user is not the owner' do
+        let(:form) { create(:form) }
+
+        before do
+          delete "/api/v1/forms/#{form.friendly_id}",
+            params: {},
+            headers: header_with_authentication(user)
+        end
+
+        it 'returns http code 403' do
+          expect_status(403)
+        end
+      end
+    end
+
+    context 'a nonexistent form' do
+      it  'returns http code 404' do
+        delete "/api/v1/forms/something",
+          params: {},
+          headers: header_with_authentication(user)
+        
+        expect_status(404)
+      end
+    end
+  end
 end
