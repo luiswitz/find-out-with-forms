@@ -19,6 +19,8 @@ class Api::V1::FormsController < Api::V1::ApiController
   end
 
   def create
+    @form = Form.create(form_params)
+    render json: @form, status: 200
   end
 
   def destroy
