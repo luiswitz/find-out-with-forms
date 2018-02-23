@@ -1,7 +1,7 @@
 FactoryBot.define do
   factory :question do
     title { FFaker::Lorem.phrase }
-    kind { rand(0..3) }
+    kind { Question::kinds.to_a.sample[0] }
     form
   end
 end
