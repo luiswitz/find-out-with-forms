@@ -9,6 +9,7 @@ class Api::V1::QuestionsController < Api::V1::ApiController
   end
 
   def update
+    render json: {}, status: 200
   end
 
   def destroy

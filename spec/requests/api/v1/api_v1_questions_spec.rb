@@ -57,4 +57,28 @@ RSpec.describe "Api::V1::Questions", type: :request do
       end
     end
   end
+
+  describe '#update' do
+
+    context 'with invalid authentication headers' do
+      it_behaves_like :deny_without_authorization, :put, '/api/v1/questions/0'
+    end
+
+    context 'with valid authentication headers' do
+      context 'an existent question' do
+        let(:question) { create(:question, form: form) }
+        let(:question_attributes) { attributes_for(:question, id: question.id) }
+
+        before do
+          put "/api/v1/questions/#{question.id}",
+            params: { question: question_attributes },
+            headers: header_with_authentication(user)
+        end
+
+        it 'returns http code 200' do
+          expect_status(200)
+        end
+      end
+    end
+  end
 end
