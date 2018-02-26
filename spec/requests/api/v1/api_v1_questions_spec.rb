@@ -59,7 +59,6 @@ RSpec.describe "Api::V1::Questions", type: :request do
   end
 
   describe '#update' do
-
     context 'with invalid authentication headers' do
       it_behaves_like :deny_without_authorization, :put, '/api/v1/questions/0'
     end
@@ -77,6 +76,12 @@ RSpec.describe "Api::V1::Questions", type: :request do
 
         it 'returns http code 200' do
           expect_status(200)
+        end
+
+        it 'creates a question with valid data' do
+          question_attributes.each do |field|
+            expect(Question.first[field.first]).to eq(field.last)
+          end
         end
       end
     end
