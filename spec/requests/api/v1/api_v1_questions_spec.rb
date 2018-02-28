@@ -63,7 +63,7 @@ RSpec.describe "Api::V1::Questions", type: :request do
       it_behaves_like :deny_without_authorization, :put, '/api/v1/questions/0'
     end
 
-    context 'with valid authentication headers' do
+    context 'current user is the owner' do
       context 'an existent question' do
         let(:question) { create(:question, form: form) }
         let(:question_attributes) { attributes_for(:question, id: question.id) }
