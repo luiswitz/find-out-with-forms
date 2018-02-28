@@ -63,8 +63,8 @@ RSpec.describe "Api::V1::Questions", type: :request do
       it_behaves_like :deny_without_authorization, :put, '/api/v1/questions/0'
     end
 
-    context 'current user is the owner' do
-      context 'an existent question' do
+    context 'an existent question' do
+      context 'current user is the owner' do
         let(:question) { create(:question, form: form) }
         let(:question_attributes) { attributes_for(:question, id: question.id) }
 
@@ -88,6 +88,21 @@ RSpec.describe "Api::V1::Questions", type: :request do
           question_attributes.each do |field|
             expect(json[field.first.to_s]).to eq(field.last)
           end
+        end
+      end
+
+      context 'current user is not the owner' do
+        let(:question) { create(:question) }
+        let(:question_attributes) { attributes_for(:question, id: question.id) }
+
+        before do
+          put "/api/v1/questions/#{question.id}",
+            params: { question: question_attributes },
+            headers: header_with_authentication(user)
+        end
+
+        it 'returns http code 403' do
+          expect_status(403)
         end
       end
     end
