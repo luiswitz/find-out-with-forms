@@ -106,5 +106,17 @@ RSpec.describe "Api::V1::Questions", type: :request do
         end
       end
     end
+
+    context 'a non existent question' do
+      let(:question_attributes) { attributes_for(:question) }
+
+      it 'retuns http code 404' do
+        put "/api/v1/questions/0",
+          params: { question: question_attributes },
+          headers: header_with_authentication(user)
+
+        expect_status(404)
+      end
+    end
   end
 end
