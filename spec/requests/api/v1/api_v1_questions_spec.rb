@@ -86,7 +86,7 @@ RSpec.describe "Api::V1::Questions", type: :request do
 
         it 'returns the correct data' do
           question_attributes.each do |field|
-            expect(json[field.first.to_s]).to eq(field.las)
+            expect(json[field.first.to_s]).to eq(field.last)
           end
         end
       end

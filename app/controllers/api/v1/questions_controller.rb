@@ -1,7 +1,8 @@
 class Api::V1::QuestionsController < Api::V1::ApiController
   before_action :authenticate_api_v1_user!
+  before_action :set_question, only: [:update]
   before_action :set_form
-  before_action :allow_only_owner, only: [:create]
+  before_action :allow_only_owner, only: [:create, :update]
 
   def create
     @question = Question.create(question_params.merge(form: @form))
@@ -9,7 +10,8 @@ class Api::V1::QuestionsController < Api::V1::ApiController
   end
 
   def update
-    render json: {}, status: 200
+    @question.update(question_params)
+    render json: @question, status: 200
   end
 
   def destroy
@@ -25,6 +27,10 @@ class Api::V1::QuestionsController < Api::V1::ApiController
 
   def set_form
     @form = @question ? @question.form : Form.find(params[:form_id])
+  end
+
+  def set_question
+    @question = Question.find(params[:id])
   end
 
   def question_params
