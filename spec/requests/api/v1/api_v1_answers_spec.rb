@@ -1,10 +1,10 @@
 require 'rails_helper'
 
 RSpec.describe "Api::V1::Answers", type: :request do
-  describe "GET /api_v1_answers" do
-    it "works! (now write some real specs)" do
-      get api_v1_answers_index_path
-      expect(response).to have_http_status(200)
+  describe '#index' do
+    context 'with invalid authentication headers' do
+      it_behaves_like :deny_without_authorization, :get, '/api/v1/answers'
     end
+
   end
 end
