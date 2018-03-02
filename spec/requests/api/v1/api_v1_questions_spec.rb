@@ -119,4 +119,56 @@ RSpec.describe "Api::V1::Questions", type: :request do
       end
     end
   end
+
+  describe '#destroy' do
+    context 'with invalid authentication headers' do
+      it_behaves_like :deny_without_authorization, :delete, '/api/v1/questions/0'
+    end
+    
+    context 'with valid authentication headers' do
+      context 'an existent question' do
+        context 'current user is the owner' do
+          let(:question) { create(:question, form: form) }
+
+          before do
+            delete "/api/v1/questions/#{question.id}",
+              params: {},
+              headers: header_with_authentication(user)
+          end
+
+          it 'returns http code 200' do
+            expect_status(200)
+          end
+
+          it 'deletes the question' do
+            expect(Question.all.count).to eq 0
+          end
+        end
+
+        context 'current user is not the owner' do
+          let(:question) { create(:question) }
+
+          before do
+            delete "/api/v1/questions/#{question.id}",
+              params: {},
+              headers: header_with_authentication(user)
+          end
+
+          it 'returns http code 403' do
+            expect_status(403)
+          end
+        end
+      end
+
+      context 'a non existent question' do
+        it 'returns http code 404' do
+          delete "/api/v1/questions/0",
+            params: {},
+            headers: header_with_authentication(user)
+
+          expect_status(404)
+        end
+      end
+    end
+  end
 end
