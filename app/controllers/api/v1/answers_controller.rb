@@ -4,7 +4,8 @@ class Api::V1::AnswersController < Api::V1::ApiController
   before_action :allow_only_user, only: [:index]
 
   def index
-    render json: {}, status: 200
+    @answers = @form.answers
+    render json: @answers, status: 200
   end
 
   def show

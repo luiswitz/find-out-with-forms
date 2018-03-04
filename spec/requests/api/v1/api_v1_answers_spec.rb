@@ -11,18 +11,26 @@ RSpec.describe "Api::V1::Answers", type: :request do
 
     context 'with valid authentication headers' do
       context 'an existent answer' do
-        let(:answer) { create(:answer, form: form) }
-        let(:questions_answers_1) { create(:questions_answer, answer: answer) }
-        let(:questions_answers_2) { create(:questions_answer, answer: answer) }
+        let!(:answer1) { create(:answer, form: form) }
+        let!(:answer2) { create(:answer, form: form) }
 
         before do
           get "/api/v1/answers/",
-            params: {form_id: answer.form_id},
+            params: {form_id: form.id},
             headers: header_with_authentication(user)
         end
 
         it 'returns http code 200' do
           expect_status(200)
+        end
+
+        it 'returns a form list with 2 answers' do
+          expect(json.count).to eq 2
+        end
+
+        it 'returns the right data' do
+          expect(json[0]).to eq(JSON.parse(answer1.to_json))
+          expect(json[1]).to eq(JSON.parse(answer2.to_json))
         end
       end
     end
