@@ -16,7 +16,7 @@ RSpec.describe "Api::V1::Answers", type: :request do
         let(:questions_answers_2) { create(:questions_answer, answer: answer) }
 
         before do
-          get "/api/v1/answers/#{answer.id}",
+          get "/api/v1/answers/",
             params: {form_id: answer.form_id},
             headers: header_with_authentication(user)
         end
