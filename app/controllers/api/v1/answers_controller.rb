@@ -1,7 +1,10 @@
-class Api::V1::AnswersController < ApplicationController
+class Api::V1::AnswersController < Api::V1::ApiController
   before_action :authenticate_api_v1_user!
+  before_action :set_form
+  before_action :allow_only_user, only: [:index]
 
   def index
+    render json: {}, status: 200
   end
 
   def show
@@ -11,5 +14,17 @@ class Api::V1::AnswersController < ApplicationController
   end
 
   def destroy
+  end
+
+  private
+
+  def set_form
+    @form = @answer ? @answer.form : Form.find(params[:form_id])
+  end
+
+  def allow_only_user
+    unless current_api_v1_user == @form.user
+      render(json: {}, status: :forbiden) and return
+    end
   end
 end
