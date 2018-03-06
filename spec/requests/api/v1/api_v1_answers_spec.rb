@@ -44,8 +44,8 @@ RSpec.describe "Api::V1::Answers", type: :request do
     context 'with valid authentication headers' do
       context 'an existent answer' do
         let(:answer) { create(:answer, form: form) }
-        let(:questions_answers_1) { create(:questions_answer, answer: answer) }
-        let(:questions_answers_2) { create(:questions_answer, answer: answer) }
+        let(:questions_answers_1) { create(:questions_answer, answer_id: answer.id) }
+        let(:questions_answers_2) { create(:questions_answer, answer_id: answer.id) }
 
         before do
           get "/api/v1/answers/#{answer.id}",
@@ -57,9 +57,25 @@ RSpec.describe "Api::V1::Answers", type: :request do
           expect_status(200)
         end
 
+        it 'returns the right data' do
+          expect(json.except(:question_answers)).to eq(JSON.parse(answer.to_json))
+        end
+
+        it 'returns related question_answers' do
+          expect(json['questions_answers'].first).to eq(JSON.parse(questions_answers_1.to_json))
+          expect(json['questions_answers'].last).to eq(JSON.parse(questions_answers_2.to_json))
+        end
       end
 
-    end
+      context 'a non existent answer' do
+        it 'returns http code 404' do
+          get '/api/v1/answers/something',
+            params: {},
+            headers: header_with_authentication(user)
 
+          expect_status(404)
+        end
+      end
+    end
   end
 end

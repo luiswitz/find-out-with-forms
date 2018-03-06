@@ -10,7 +10,7 @@ class Api::V1::AnswersController < Api::V1::ApiController
   end
 
   def show
-    render json: {}, status: 200
+    render json: @answer, include: :questions_answers, status: 200
   end
 
   def create
