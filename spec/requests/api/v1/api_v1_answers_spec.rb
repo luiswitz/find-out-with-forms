@@ -44,8 +44,8 @@ RSpec.describe "Api::V1::Answers", type: :request do
     context 'with valid authentication headers' do
       context 'an existent answer' do
         let(:answer) { create(:answer, form: form) }
-        let(:questions_answers_1) { create(:questions_answer, answer_id: answer.id) }
-        let(:questions_answers_2) { create(:questions_answer, answer_id: answer.id) }
+        let!(:questions_answers_1) { create(:questions_answer, answer_id: answer.id) }
+        let!(:questions_answers_2) { create(:questions_answer, answer_id: answer.id) }
 
         before do
           get "/api/v1/answers/#{answer.id}",
@@ -77,5 +77,12 @@ RSpec.describe "Api::V1::Answers", type: :request do
         end
       end
     end
+  end
+
+  describe '#create' do
+    context 'with invalid authentication headers' do
+      it_behaves_like :deny_without_authorization, :post, '/api/v1/answers'
+    end
+
   end
 end
