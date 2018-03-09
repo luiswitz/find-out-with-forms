@@ -84,5 +84,33 @@ RSpec.describe "Api::V1::Answers", type: :request do
       it_behaves_like :deny_without_authorization, :post, '/api/v1/answers'
     end
 
+    context 'with valid authentication headers' do
+      let(:question) { create(:question, form: form) }
+      let(:questions_answers_1_attributes) { attributes_for(:questions_answer, question_id: question.id) }
+      let(:questions_answers_2_attributes) { attributes_for(:questions_answer, question_id: question.id) }
+
+      context 'with a valid form id' do
+        before do
+          post '/api/v1/answers',
+            params: {
+              form_id: form.id,
+              questions_answers: [
+               questions_answers_1_attributes, 
+               questions_answers_2_attributes
+             ]
+            },
+            headers: header_with_authentication(user)
+        end
+
+        it 'returns http code 200' do
+          expect_status(200)
+        end
+
+        it 'associates the answer with the form' do
+          expect(form).to eql(Answer.last.form)
+        end
+      end
+    end
   end
+
 end

@@ -1,5 +1,5 @@
 class Api::V1::AnswersController < Api::V1::ApiController
-  before_action :authenticate_api_v1_user!
+  before_action :authenticate_api_v1_user!, except: [:create]
   before_action :set_answer, only: [:show]
   before_action :set_form
   before_action :allow_only_user, only: [:index]
@@ -14,6 +14,7 @@ class Api::V1::AnswersController < Api::V1::ApiController
   end
 
   def create
+    render json: @answer, status: 200
   end
 
   def destroy
