@@ -29,4 +29,23 @@ RSpec.describe Answer, type: :model do
       expect(answer).to_not be_valid
     end
   end
+
+  describe '.create_with_questions' do
+    let(:form) { create(:form) }
+
+    let(:answer) { build(:answer, form: form) }
+    let(:question_answer_1) { create(:questions_answer) }
+    let(:question_answer_2) { create(:questions_answer) }
+
+    let(:question_answers) { [question_answer_1, question_answer_2] }
+
+    before do
+      @answer = described_class.create_with_questions(form, question_answers)
+    end
+
+    it 'creates a associated form' do
+      expect(@answer.form).to eq(form)
+    end
+
+  end
 end
