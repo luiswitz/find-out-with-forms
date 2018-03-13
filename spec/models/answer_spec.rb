@@ -34,17 +34,30 @@ RSpec.describe Answer, type: :model do
     let(:form) { create(:form) }
 
     let(:answer) { build(:answer, form: form) }
-    let(:question_answer_1) { create(:questions_answer) }
-    let(:question_answer_2) { create(:questions_answer) }
+    let(:question_answer_1) { build(:questions_answer) }
+    let(:question_answer_2) { build(:questions_answer) }
 
-    let(:question_answers) { [question_answer_1, question_answer_2] }
+    let(:questions_answers) { [question_answer_1, question_answer_2] }
 
     before do
-      @answer = described_class.create_with_questions(form, question_answers)
+      @answer = described_class.create_with_questions(form, questions_answers)
     end
 
     it 'creates a associated form' do
       expect(@answer.form).to eq(form)
+    end
+
+    it 'creates associated questions_answers' do
+      qa_1 = @answer.questions_answers.first
+      qa_2 = @answer.questions_answers.last
+
+      expect(qa_1.answer_id).to eq(@answer.id)
+      expect(qa_1.question_id).to eq(question_answer_1.question_id)
+      expect(qa_1.value).to eq(question_answer_1.value)
+
+      expect(qa_2.answer_id).to eq(@answer.id)
+      expect(qa_2.question_id).to eq(question_answer_2.question_id)
+      expect(qa_2.value).to eq(question_answer_2.value)
     end
 
   end
