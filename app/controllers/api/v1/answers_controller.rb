@@ -14,6 +14,7 @@ class Api::V1::AnswersController < Api::V1::ApiController
   end
 
   def create
+    @answer = Answer.create_with_questions(@form, params[:questions_answers])
     render json: @answer, status: 200
   end
 

@@ -109,6 +109,10 @@ RSpec.describe "Api::V1::Answers", type: :request do
         it 'associates the answer with the form' do
           expect(form).to eql(Answer.last.form)
         end
+
+        it 'has questions answers associated' do
+          expect(json['id']).to eq(QuestionAnswer.first.answer.id)
+        end
       end
     end
   end
