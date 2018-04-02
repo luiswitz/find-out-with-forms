@@ -58,7 +58,7 @@ RSpec.describe "Api::V1::Answers", type: :request do
         end
 
         it 'returns the right data' do
-          expect(json.except(:question_answers)).to eq(JSON.parse(answer.to_json))
+          expect(json.except('questions_answers')).to eq(JSON.parse(answer.to_json))
         end
 
         it 'returns related question_answers' do
@@ -80,41 +80,48 @@ RSpec.describe "Api::V1::Answers", type: :request do
   end
 
   describe '#create' do
-    context 'with invalid authentication headers' do
-      it_behaves_like :deny_without_authorization, :post, '/api/v1/answers'
-    end
-
-    context 'with valid authentication headers' do
+    context 'when form has a valid id' do
       let(:question) { create(:question, form: form) }
       let(:questions_answers_1_attributes) { attributes_for(:questions_answer, question_id: question.id) }
       let(:questions_answers_2_attributes) { attributes_for(:questions_answer, question_id: question.id) }
 
-      context 'with a valid form id' do
-        before do
-          post '/api/v1/answers',
-            params: {
-              form_id: form.id,
-              questions_answers: [
-               questions_answers_1_attributes, 
-               questions_answers_2_attributes
-             ]
-            },
-            headers: header_with_authentication(user)
-        end
+      before do
+        post '/api/v1/answers',
+          params: {
+            form: form,
+            form_id: form.id,
+            questions_answers: [
+              questions_answers_1_attributes,
+              questions_answers_2_attributes
+            ]
+          },
+          headers: header_with_authentication(user)
+      end
 
-        it 'returns http code 200' do
-          expect_status(200)
-        end
+      it 'returns http code 200' do
+        expect_status(200)
+      end
 
-        it 'associates the answer with the form' do
-          expect(form).to eql(Answer.last.form)
-        end
+      it 'answer are associated with the correct form' do
+        expect(form).to eq(Answer.last.form)
+      end
 
-        it 'has questions answers associated' do
-          expect(json['id']).to eq(QuestionAnswer.first.answer.id)
-        end
+      it 'has associated questions_answers' do
+        expect(json['id']).to eq(QuestionsAnswer.first.answer.id)
+        expect(json['id']).to eq(QuestionsAnswer.last.answer.id)
+      end
+    end
+
+    context 'with an invalid form id' do
+      before do
+        post '/api/v1/answers',
+          params: { form_id: 0 },
+          headers: header_with_authentication(user)
+      end
+
+      it 'returns 404' do
+        expect_status(404)
       end
     end
   end
-
 end

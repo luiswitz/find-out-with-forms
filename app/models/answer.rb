@@ -9,7 +9,10 @@ class Answer < ApplicationRecord
     ActiveRecord::Base.transaction do
       answer = Answer.create(form: form)
       questions_answers.each do |question_answer|
-        answer.questions_answers.create(question_answer.attributes)
+        answer.questions_answers.create(
+          question_id: question_answer[:question_id],
+          value: question_answer[:value]
+        )
       end
     end
     answer
