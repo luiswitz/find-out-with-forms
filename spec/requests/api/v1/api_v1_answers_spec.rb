@@ -124,4 +124,51 @@ RSpec.describe "Api::V1::Answers", type: :request do
       end
     end
   end
+
+  describe '#destroy' do
+    context 'with invalid authentication headers' do
+      it_behaves_like :deny_without_authorization,
+        :delete, '/api/v1/answers/0'
+    end
+
+    context 'with valid authentication headers' do
+      context 'when answer exists' do
+        context 'user is the owner' do
+          let!(:answer) { create(:answer, form: form) }
+          let!(:questions_answers) { create(:questions_answer, answer: answer) }
+
+          before do
+            delete "/api/v1/answers/#{answer.id}",
+              params: {},
+              headers: header_with_authentication(user)
+          end
+
+          it 'returns http code 200' do
+            expect_status(200)
+          end
+
+          it 'deletes the answer' do
+            expect(Answer.all.count).to eq 0
+          end
+
+          it 'deletes associated questions answers' do
+            expect(QuestionsAnswer.all.count).to eq 0
+          end
+
+          it 'returns the ok message' do
+            expect(json['message']).to eq('ok')
+          end
+        end
+
+        context 'when user is not the owner' do
+
+        end
+      end
+
+      context 'when answer does not exist' do
+        
+      end
+    end
+
+  end
 end
