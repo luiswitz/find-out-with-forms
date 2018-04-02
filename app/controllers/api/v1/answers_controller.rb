@@ -35,7 +35,7 @@ class Api::V1::AnswersController < Api::V1::ApiController
 
   def allow_only_user
     unless current_api_v1_user == @form.user
-      render(json: {}, status: :forbiden) and return
+      render(json: {}, status: :forbidden) and return
     end
   end
 end
