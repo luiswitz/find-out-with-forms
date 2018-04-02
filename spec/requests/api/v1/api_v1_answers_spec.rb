@@ -161,14 +161,29 @@ RSpec.describe "Api::V1::Answers", type: :request do
         end
 
         context 'when user is not the owner' do
+          let(:answer) { create(:answer) }
 
+          before do
+            delete "/api/v1/answers/#{answer.id}",
+              params: {},
+              headers: header_with_authentication(user)
+          end
+
+          it 'returns 403 http code' do
+            expect_status(403)
+          end
         end
       end
 
       context 'when answer does not exist' do
-        
+        it 'returns 404 http code' do
+          delete '/api/v1/answers/something',
+            params: {},
+            headers: header_with_authentication(user)
+
+          expect_status(404)
+        end
       end
     end
-
   end
 end
